@@ -1,125 +1,212 @@
 # 05 — Sources de données d'entraînement
 
-Vue d'ensemble des corpus publics utilisables pour chaque phase. Une attention particulière est portée à : **licence**, **langues couvertes**, **alignements parallèles** (essentiels pour la traduction), et **téléchargement effectif** (URL et taille).
+Vue d'ensemble des corpus publics utilisables pour chaque phase. **DeepVox priorise le français** comme langue principale de validation et d'entraînement, en cohérence avec la cible SmsVox (utilisateurs francophones, notamment des régions à faible connectivité).
 
-## Tableau synthétique
+Critères : **licence**, **langues couvertes**, **alignements parallèles** (essentiels pour la traduction), **téléchargement effectif** (URL et taille), **disponibilité Kaggle** quand pertinent.
 
-| Corpus | Tâches | Langues | Heures | Licence | Alignement parallèle |
-|---|---|---|---|---|---|
-| TIMIT | Phonétique (Phase 1) | EN | 5 h | LDC payant | Non |
-| LibriSpeech | ASR (Phase 2) | EN | 1000 h | CC BY 4.0 | Non |
-| Common Voice | ASR (Phase 2) | 100+ | 30 000 h+ | CC0 | Non |
-| LJSpeech | TTS (Phase 3) | EN | 24 h | Domaine public | Non |
-| MAILABS | TTS (Phase 3) | 9 langues | ~1000 h | BSD-like | Non |
-| **MuST-C** | S2TT (Phase 5) | EN ↔ 14 langues | ~400 h/paire | CC BY-NC-ND 4.0 | **Oui (3-way: audio + texte src + texte tgt)** |
-| **CoVoST 2** | S2TT (Phase 5) | 21 → EN, EN → 15 | 2880 h | CC0 | **Oui** |
-| **Europarl-ST** | S2TT (Phase 5) | 9 langues européennes (toutes paires) | 1300 h | CC BY 4.0 | **Oui** |
-| **CVSS** | S2ST (Phase 5) | 21 → EN | 1900 h | CC BY 4.0 | **Oui (audio src + audio tgt synthétisé)** |
-| **VoxPopuli** | ASR + S2TT | 23 langues | 100 000 h | CC0 | **Partiel** |
-| FLEURS | Évaluation multilingue | 102 | ~12 h/langue | CC BY 4.0 | **Oui (3-way)** |
-| NLLB-200 (texte) | MT (Phase 4 baseline) | 200 langues | — | CC BY-NC | **Oui (texte parallèle)** |
+---
 
-## Détails par phase
+## Section A — Données francophones (priorité 1)
 
-### Phase 1 — Validation phonétique
+### A.1 — Common Voice French (le pilier)
 
-**Recommandé : TIMIT** (référence de la littérature, comparaisons faciles).
+**Mozilla Common Voice** est le corpus francophone open le plus volumineux. C'est notre dataset principal pour les Phases 1 et 2.
 
-**Alternatives gratuites :**
-- **Buckeye Corpus** (anglais conversationnel, ~38 h, licence académique gratuite) — http://buckeyecorpus.osu.edu/
-- **L2-ARCTIC** (anglais L2 non-natif, ~27 h, CC BY 4.0) — https://psi.engr.tamu.edu/l2-arctic-corpus/
-- **CMU ARCTIC** (anglais lu, ~7 locuteurs, gratuit) — http://www.festvox.org/cmu_arctic/
+| Source | URL | Volume | Avantage |
+|---|---|---|---|
+| Officielle Mozilla | https://commonvoice.mozilla.org/fr/datasets | ~1000 h validées | Toujours à jour, version la plus récente |
+| Kaggle v21.0 (mars 2025) | https://www.kaggle.com/datasets/fredrelec/common-voice-french-21-0-2025 | Snapshot v21.0 | Téléchargement direct sans compte Mozilla, pratique pour notebooks Kaggle |
+| Kaggle (rahulbhalley) | https://www.kaggle.com/datasets/rahulbhalley/common-voice-french | Snapshot ancien | Backup |
+| Kaggle (olmatz) | https://www.kaggle.com/datasets/olmatz/commonvoicefr | Snapshot ancien | Backup |
+| Kaggle (Mozilla officiel) | https://www.kaggle.com/datasets/mozillaorg/common-voice | Multilingue | Inclut FR + autres langues |
 
-Pour le **français** : **BREF120** (LDC payant) ou portion française de **Common Voice** avec alignement forcé via **Montreal Forced Aligner** (gratuit).
+- **Licence :** CC0 (domaine public)
+- **Format :** MP3 16 kHz + transcriptions CSV
+- **Locuteurs :** milliers, accents variés (France, Belgique, Suisse, Canada, Afrique francophone)
+- **Annotations phonétiques :** non fournies, à générer via Montreal Forced Aligner
 
-### Phase 2 — ASR depuis frames Codec2
+### A.2 — MLS French (Multilingual LibriSpeech)
 
-**Pré-entraînement multilingue : Common Voice** — https://commonvoice.mozilla.org/datasets
-- Téléchargement par langue, format MP3 + transcription CSV
-- Avantages : énorme volume, multilingue, gratuit, CC0
-- Inconvénients : qualité variable (crowdsourcé), accents très divers (peut être un atout)
+**Audiobooks LibriVox français**, qualité studio, alignement texte-audio fourni.
 
-**Fine-tuning anglais propre : LibriSpeech** — https://www.openslr.org/12
-- 1000 h d'audiobooks lus, qualité studio
-- Splits standards : train-clean-100, train-clean-360, train-other-500, dev-clean, test-clean
+- URL : https://www.openslr.org/94
+- Volume : ~1100 h
+- Licence : CC BY 4.0
+- Avantage : qualité audio supérieure à Common Voice
+- Usage : fine-tuning Phase 2, validation propre
 
-**Français : MLS (Multilingual LibriSpeech)** — https://www.openslr.org/94
-- ~1100 h français + 7 autres langues, format compatible LibriSpeech
+### A.3 — CSS10 French (TTS mono-locuteur)
 
-### Phase 3 — TTS texte → frames Codec2
+**Voix unique** francophone, idéale pour entraînement TTS de base.
 
-**Anglais mono-locuteur : LJSpeech** — https://keithito.com/LJ-Speech-Dataset/
-- 24 h, une seule voix féminine, qualité audiobook, alignement texte-audio fourni
+| Source | URL | Volume |
+|---|---|---|
+| Officielle | https://github.com/Kyubyong/css10 | ~10 h |
+| Kaggle | https://www.kaggle.com/datasets/bryanpark/french-single-speaker-speech-dataset | ~10 h |
 
-**Multilingue mono-locuteur par langue : M-AILABS Speech Dataset**
-- Anglais, allemand, espagnol, italien, ukrainien, russe, polonais, français, néerlandais
-- ~1000 h total, voix variées par langue
+- Licence : domaine public
+- Usage : Phase 3 (TTS), point de départ minimal
 
-**Français : SynPaFlex** ou **CSS10 français** — voix unique, ~10 h, gratuit
+### A.4 — African Accented French (cible SmsVox)
 
-**Multi-locuteur (pour voice cloning Phase 6) : VCTK** — https://datashare.ed.ac.uk/handle/10283/3443
-- 110 locuteurs anglais natifs, ~44 h, accents variés
+**Variantes francophones africaines** — essentiel pour valider la robustesse sur l'audience SmsVox réelle.
 
-### Phase 4 — Cascade baseline (MT texte)
+- URL : http://www.openslr.org/57/
+- Volume : ~22 h
+- Locuteurs : Sénégal, Maroc, RDC, Côte d'Ivoire, Tunisie, Algérie
+- Licence : CC BY-SA 4.0
+- Usage : test out-of-distribution Phase 1, fine-tuning Phase 2
 
-**Modèles MT pré-entraînés à réutiliser, pas à entraîner :**
-- **NLLB-200 (Meta)** — 200 langues, distillé en versions 600M / 1.3B / 3.3B / 54.5B paramètres
-  - https://huggingface.co/facebook/nllb-200-distilled-600M
-- **M2M-100 (Meta)** — 100 langues, alternative
-- **OPUS-MT (Helsinki NLP)** — modèles bilingues légers spécialisés par paire
+### A.5 — Datasets Kaggle francophones supplémentaires
 
-### Phase 5 — End-to-end S2TT et S2ST
+| Dataset | URL Kaggle | Type |
+|---|---|---|
+| **French Speech Recognition Dataset** (unidpro) | https://www.kaggle.com/datasets/unidpro/french-speech-recognition-dataset | ASR français commercial-grade |
+| **French Spontaneous Dialogue** (nexdatafrank) | https://www.kaggle.com/datasets/nexdatafrank/french-spontaneous-dialogue-speech-dataset | Parole spontanée (≠ parole lue) |
 
-#### Pour S2TT (parole source → texte cible)
+### A.6 — Sources francophones additionnelles (hors Kaggle)
 
-**MuST-C v1.2** — https://ict.fbk.eu/must-c/
-- Conférences TED, audio EN + transcription EN + traduction dans 14 langues cibles
-- ~400 h par paire EN→{DE, ES, FR, IT, NL, PT, RO, RU, ZH, JA, AR, FA, TR, VI}
+- **SynPaFlex** (français expressif) — https://www.ortolang.fr/market/corpora/synpaflex-corpus — ~87 h
+- **VoxForge French** (historique, gratuit) — http://www.voxforge.org/fr — ~30 h
+- **PFC** (Phonologie du Français Contemporain) — https://www.projet-pfc.net/ — variable, dialectologique
+- **ESLO** (Enquêtes SocioLinguistiques à Orléans) — https://eslo.huma-num.fr/ — variable
+- **OFROM** (Oral Français de Romandie) — https://ofrom.unine.ch/ — variable
+
+---
+
+## Section B — Annotations phonétiques pour le français
+
+Aucun des datasets francophones ci-dessus ne fournit d'annotations phonétiques manuelles. Pour la Phase 1, on génère ces annotations automatiquement.
+
+### Outil principal : Montreal Forced Aligner (MFA)
+
+- URL : https://montreal-forced-aligner.readthedocs.io/
+- Modèle français pré-entraîné : `french_mfa`
+- Lexique : `french_mfa.dict`
+- Sortie : TextGrid avec bornes phonétiques (~10 ms de précision)
+- Licence : MIT
+
+### Alternative : eSpeak NG comme G2P
+
+- Phonémiseur grapheme-to-phoneme open-source
+- Génère uniquement la séquence phonémique attendue (pas les bornes temporelles)
+- Utile pour vérifier la cohérence avec MFA
+
+### Inventaire phonémique français
+
+36 phonèmes en SAMPA-FR : 16 voyelles (4 nasales), 17 consonnes, 3 semi-voyelles. Document de référence : https://www.phon.ucl.ac.uk/home/sampa/french.htm
+
+---
+
+## Section C — Données pour la traduction (Phases 4-6)
+
+Pour la traduction (FR↔EN comme paire principale), il faut des **paires parallèles** (audio FR + texte EN ou audio EN, etc.).
+
+### C.1 — MuST-C v1.2 (référence académique)
+
+- URL : https://ict.fbk.eu/must-c/
+- Paires : EN↔FR disponible (~400 h)
 - Format : audio WAV + alignement YAML + textes parallèles
-- Le dataset le plus utilisé en S2TT académique
+- Licence : CC BY-NC-ND 4.0 (attention : usage commercial restreint)
+- Usage : Phase 5 S2TT principal
 
-**CoVoST 2** — https://github.com/facebookresearch/covost
-- Dérivé de Common Voice, 21 langues vers anglais + anglais vers 15 langues
-- Total 2880 h, gratuit (CC0)
-- Inclut les paires non-anglaises grâce à pivot : utile pour évaluer en zero-shot
+### C.2 — CoVoST 2
 
-**Europarl-ST** — https://www.mllp.upv.es/europarl-st/
-- Débats du Parlement européen, 9 langues, toutes paires bidirectionnelles (72 paires)
-- ~1300 h total, langage formel/politique
+- URL : https://github.com/facebookresearch/covost
+- Paires : FR→EN et EN→FR disponibles
+- Volume total : 2880 h
+- Licence : CC0 (utilisation libre)
+- Avantage : dérivé de Common Voice, qualité hétérogène mais grand volume
 
-#### Pour S2ST (parole source → parole cible)
+### C.3 — CVSS (S2ST de référence)
 
-**CVSS (Common Voice-based Speech-to-Speech)** — https://github.com/google-research-datasets/cvss
-- 21 langues vers anglais, audio cible synthétisé par TTS de qualité
-- 1900 h, CC BY 4.0
-- Le dataset de référence pour S2ST end-to-end
+- URL : https://github.com/google-research-datasets/cvss
+- Audio source réel + audio cible synthétisé par TTS de qualité
+- Inclut FR→EN
+- Licence : CC BY 4.0
+- Usage : Phase 5 S2ST principal
 
-**VoxPopuli (subset transcrit + traduit)** — https://github.com/facebookresearch/voxpopuli
-- 100 000 h non transcrites + sous-ensembles annotés en ASR et ST
-- 23 langues européennes, gratuit
+### C.4 — Europarl-ST
 
-### Phase 6 — Évaluation multilingue large
+- URL : https://www.mllp.upv.es/europarl-st/
+- Paires bidirectionnelles entre 9 langues européennes (dont FR)
+- Volume : ~1300 h total
+- Licence : CC BY 4.0
+- Usage : domaine politique/formel, complément de MuST-C
 
-**FLEURS (Few-shot Learning Evaluation of Universal Representations of Speech)** — https://huggingface.co/datasets/google/fleurs
-- 102 langues, ~12 h par langue
-- Audio + texte source + texte cible (toutes paires) + transcription phonétique
-- Conçu spécifiquement pour benchmark multilingue zero-shot/few-shot
-- Indispensable pour positionner les résultats dans la littérature
+---
 
-## Données manquantes ou à constituer
+## Section D — Modèles MT pré-entraînés (à réutiliser, pas à entraîner)
 
-Aucun corpus existant ne fournit directement des **paires de frames Codec2 alignées entre langues**. Il faudra :
+Pour la Phase 4 (cascade baseline), on n'entraîne pas de modèle MT — on utilise des modèles existants distillés :
 
-1. Encoder en Codec2 les corpus audio sélectionnés (étape de préparation)
-2. Pour S2ST : utiliser CVSS (audio cible déjà synthétisé) puis encoder les deux côtés en Codec2
-3. Pour les langues sous-ressourcées non couvertes par CVSS : générer de l'audio cible via TTS multilingue (XTTS-v2, MMS) — accepté en recherche, à documenter clairement comme "synthetic target"
+- **NLLB-200 distillé 600M** (Meta) — https://huggingface.co/facebook/nllb-200-distilled-600M — 200 langues
+- **M2M-100** (Meta) — alternative, 100 langues
+- **OPUS-MT FR-EN** (Helsinki NLP) — https://huggingface.co/Helsinki-NLP/opus-mt-fr-en — modèle bilingue compact
+
+---
+
+## Section E — Évaluation multilingue (Phase 6)
+
+- **FLEURS** — https://huggingface.co/datasets/google/fleurs — 102 langues dont FR, ~12 h/langue, audio + texte source + texte cible
+- Indispensable pour positionner DeepVox dans le paysage des modèles multilingues
+
+---
+
+## Tableau récapitulatif (priorisé)
+
+| Corpus | Tâches | Langues | Heures | Licence | Source principale |
+|---|---|---|---|---|---|
+| **Common Voice FR v21.0** | Phase 1, Phase 2 | FR | ~1000 h | CC0 | Kaggle + Mozilla |
+| **MLS French** | Phase 2 | FR | ~1100 h | CC BY 4.0 | OpenSLR |
+| **CSS10 French** | Phase 3 | FR | ~10 h | Domaine public | Kaggle + GitHub |
+| **African Accented French** | Phase 1 OOD, Phase 2 | FR (variants) | ~22 h | CC BY-SA 4.0 | OpenSLR 57 |
+| **MuST-C EN-FR** | Phase 5 S2TT | EN↔FR | ~400 h | CC BY-NC-ND 4.0 | FBK |
+| **CoVoST 2** | Phase 5 S2TT | FR↔EN | 2880 h total | CC0 | Meta GitHub |
+| **CVSS** | Phase 5 S2ST | FR→EN | 1900 h total | CC BY 4.0 | Google |
+| **FLEURS** | Phase 6 | 102 langues | ~12 h/langue | CC BY 4.0 | HuggingFace |
+| **NLLB-200** (modèle) | Phase 4 baseline | 200 langues | — | CC BY-NC | HuggingFace |
+
+---
+
+## Stratégie de téléchargement Kaggle
+
+L'utilisation de Kaggle apporte plusieurs avantages opérationnels :
+
+1. **Pas de compte Mozilla requis** pour Common Voice (formulaire sinon obligatoire)
+2. **Notebooks Kaggle gratuits** avec GPU pour exploration (jusqu'à 30 h/semaine)
+3. **Téléchargement programmatique** via Kaggle CLI :
+
+```bash
+# Installation
+pip install kaggle
+
+# Configuration : placer kaggle.json dans ~/.kaggle/
+chmod 600 ~/.kaggle/kaggle.json
+
+# Téléchargement Common Voice FR v21.0
+kaggle datasets download -d fredrelec/common-voice-french-21-0-2025
+
+# Téléchargement CSS10 French
+kaggle datasets download -d bryanpark/french-single-speaker-speech-dataset
+
+# Téléchargement African Accented French (depuis OpenSLR, pas Kaggle)
+wget http://www.openslr.org/resources/57/African_Accented_French.tar.gz
+```
+
+Un script d'orchestration sera fourni dans `scripts/download_datasets.py` une fois la Phase 1 démarrée.
+
+---
 
 ## Considérations légales et éthiques
 
-- **CC BY-NC-ND** (MuST-C) : interdit commercial et dérivés. Utilisation académique OK, mais publication de modèles dérivés dans un produit commercial = problème
-- **CC0 / CC BY** (CoVoST, Common Voice, Europarl-ST, FLEURS) : aucun problème, même usage commercial
-- **TIMIT** (LDC) : licence individuelle, ne pas redistribuer le corpus brut
-- **Voice cloning** : risques d'usage malveillant (deepfake vocal). Toute publication doit inclure une section éthique et envisager un watermarking audio (cf. AudioSeal de Meta)
+- **CC BY-NC-ND** (MuST-C) : interdit usage commercial et dérivés. Usage académique uniquement. Si DeepVox vise un déploiement commercial via SmsVox, **éviter MuST-C** ou cantonner son usage à l'évaluation
+- **CC0 / CC BY / CC BY-SA** (Common Voice, CoVoST, CVSS, MLS, African Accented FR, Europarl-ST, FLEURS) : aucun problème, même usage commercial
+- **NLLB-200** : CC BY-NC pour le modèle Meta (non-commercial). Pour usage commercial, considérer M2M-100 ou OPUS-MT
+- **Voice cloning** (Phase 6) : risques deepfake vocal. Watermarking systématique (AudioSeal de Meta), limitation aux mêmes locuteurs
+- **Données africaines** : importance éthique de retourner des bénéfices aux communautés représentées (collaborations, attribution claire, modèles ouverts pour ces langues)
+
+---
 
 ## Pré-traitement commun à tout le projet
 
@@ -135,19 +222,21 @@ Pour toutes les phases, un script centralisé doit produire la version "Codec2-e
   audio_8k/*.wav         (8 kHz mono)
   codec2_1200/*.c2       (frames Codec2 mode 1200)
   codec2_700c/*.c2       (frames Codec2 mode 700C)
-  metadata.json          (alignements, transcriptions, traductions)
+  metadata.json          (alignements MFA, transcriptions, traductions)
 ```
 
-Ce pipeline peut réutiliser les binaires `c2enc` / `c2dec` du projet codec2 (https://github.com/drowe67/codec2) ou la JNI déjà intégrée dans SmsVox.
+Ce pipeline réutilise les binaires `c2enc` / `c2dec` du projet codec2 (https://github.com/drowe67/codec2), installés via `brew install codec2` ou `apt install codec2` (voir `src/deepvox/codec2/` pour les wrappers Python subprocess).
+
+---
 
 ## Estimation des volumes
 
 | Phase | Données nécessaires | Stockage |
 |---|---|---|
-| 1 | TIMIT ou équivalent | < 50 GB |
-| 2 | LibriSpeech + Common Voice (1 langue) | ~200 GB |
-| 3 | LJSpeech + M-AILABS (1 langue) | ~50 GB |
-| 5 | MuST-C + CVSS (3 paires de langues) | ~500 GB |
+| 1 | Common Voice FR + MLS French + African Accented + variantes encodées | ~100 GB |
+| 2 | + autres langues Common Voice si extension multilingue | ~200 GB |
+| 3 | CSS10 French + SynPaFlex + variantes TTS | ~30 GB |
+| 5 | MuST-C EN-FR + CVSS FR-EN + CoVoST 2 | ~400 GB |
 | 6 | + FLEURS pour évaluation | +50 GB |
 
-**Total recommandé : 1 TB de stockage SSD pour confort de travail.**
+**Total recommandé : 800 GB - 1 TB de stockage SSD** pour confort de travail incluant variantes encodées Codec2 et checkpoints intermédiaires.
