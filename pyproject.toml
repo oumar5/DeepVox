@@ -1,0 +1,90 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deepvox"
+version = "0.0.1"
+description = "Ultra-light multilingual speech translation built on Codec2 discrete representations."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Oumar Ben Lol" },
+]
+keywords = [
+    "speech-translation",
+    "codec2",
+    "low-resource",
+    "on-device-ai",
+    "multilingual-speech",
+    "asr",
+    "tts",
+    "s2st",
+    "s2tt",
+]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+]
+
+dependencies = [
+    "torch>=2.2",
+    "torchaudio>=2.2",
+    "transformers>=4.40",
+    "datasets>=2.18",
+    "librosa>=0.10",
+    "soundfile>=0.12",
+    "numpy>=1.26",
+    "scipy>=1.12",
+    "tqdm>=4.66",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "ruff>=0.4",
+    "mypy>=1.10",
+    "ipykernel>=6.29",
+    "matplotlib>=3.8",
+]
+training = [
+    "wandb>=0.17",
+    "tensorboard>=2.16",
+    "accelerate>=0.30",
+]
+export = [
+    "tensorflow>=2.16",
+    "onnx>=1.16",
+    "onnxruntime>=1.18",
+]
+
+[project.urls]
+Homepage = "https://github.com/oumar5/DeepVox"
+Repository = "https://github.com/oumar5/DeepVox"
+Issues = "https://github.com/oumar5/DeepVox/issues"
+"Parent Project (SmsVox)" = "https://github.com/oumar5/SmsVox"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "-v --strict-markers"
