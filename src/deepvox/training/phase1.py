@@ -28,6 +28,7 @@ def train(
     max_epochs: int = 50,
     batch_size: int = 64,
     lr: float = 1e-3,
+    weight_decay: float = 1e-2,
     patience: int = 5,
     device: str | None = None,
 ) -> PhonemeClassifier:
@@ -65,7 +66,10 @@ def train(
     model = model.to(device)
     logger.info("Model parameters: %d", model.count_parameters())
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode="min", factor=0.5, patience=2
+    )
     criterion = nn.CrossEntropyLoss()
 
     train_loader = DataLoader(
@@ -88,23 +92,24 @@ def train(
         pbar = tqdm(train_loader, desc=f"Epoch {epoch}", unit="batch", dynamic_ncols=True, leave=False)
         for feats, labels in pbar:
             feats = feats.to(device)
-            labels = torch.tensor(labels, dtype=torch.long, device=device)
+            labels = labels.to(device, dtype=torch.long)
 
             logits = model(feats)  # (batch, seq, num_classes)
-            # Flatten for loss
-            logits_flat = logits.reshape(-1, logits.size(-1))
-            labels_flat = labels.reshape(-1)
+            # Dataset returns (2*context+1)-frame windows with the center frame's label.
+            # Use only the center frame's logits for classification.
+            center = logits.size(1) // 2
+            logits_center = logits[:, center, :]  # (batch, num_classes)
 
-            loss = criterion(logits_flat, labels_flat)
+            loss = criterion(logits_center, labels)
 
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
             train_loss += loss.item() * len(labels)
-            preds = logits_flat.argmax(dim=-1)
-            train_correct += (preds == labels_flat).sum().item()
-            train_total += labels_flat.numel()
+            preds = logits_center.argmax(dim=-1)
+            train_correct += (preds == labels).sum().item()
+            train_total += labels.numel()
             pbar.set_postfix(loss=f"{loss.item():.3f}", acc=f"{train_correct/train_total:.3f}")
 
         train_loss /= train_total
@@ -112,10 +117,12 @@ def train(
 
         # --- Evaluate ---
         dev_per, dev_acc = evaluate(model, dev_loader, device)
+        scheduler.step(dev_per)
+        current_lr = optimizer.param_groups[0]["lr"]
 
         logger.info(
-            "Epoch %02d | train_loss=%.4f train_acc=%.3f | dev_PER=%.3f dev_acc=%.3f",
-            epoch, train_loss, train_acc, dev_per, dev_acc,
+            "Epoch %02d | train_loss=%.4f train_acc=%.3f | dev_PER=%.3f dev_acc=%.3f | lr=%.1e",
+            epoch, train_loss, train_acc, dev_per, dev_acc, current_lr,
         )
 
         # Early stopping
@@ -156,14 +163,14 @@ def evaluate(
     with torch.no_grad():
         for feats, labels in tqdm(data_loader, desc="Evaluating", unit="batch", dynamic_ncols=True, leave=False):
             feats = feats.to(device)
-            labels = torch.tensor(labels, dtype=torch.long, device=device)
+            labels = labels.to(device, dtype=torch.long)
 
             logits = model(feats)
-            preds = logits.reshape(-1, logits.size(-1)).argmax(dim=-1)
-            targets = labels.reshape(-1)
+            center = logits.size(1) // 2
+            preds = logits[:, center, :].argmax(dim=-1)
 
             all_preds.extend(preds.cpu().numpy())
-            all_targets.extend(targets.cpu().numpy())
+            all_targets.extend(labels.cpu().numpy())
 
     import numpy as np
     all_preds = np.array(all_preds)
@@ -189,24 +196,32 @@ def evaluate_and_report(
 
     model.eval()
     all_preds = []
+    all_topk = []
     all_targets = []
 
+    k = 5
+
     with torch.no_grad():
-        for feats, labels in test_loader:
+        for feats, labels in tqdm(test_loader, desc="Test", unit="batch", dynamic_ncols=True, leave=False):
             feats = feats.to(device)
-            labels = torch.tensor(labels, dtype=torch.long, device=device)
+            labels = labels.to(device, dtype=torch.long)
 
             logits = model(feats)
-            preds = logits.reshape(-1, logits.size(-1)).argmax(dim=-1)
-            targets = labels.reshape(-1)
+            center = logits.size(1) // 2
+            center_logits = logits[:, center, :]  # (batch, num_classes)
+
+            preds = center_logits.argmax(dim=-1)
+            topk = center_logits.topk(k=k, dim=-1).indices  # (batch, k)
 
             all_preds.extend(preds.cpu().numpy())
-            all_targets.extend(targets.cpu().numpy())
+            all_topk.extend(topk.cpu().numpy())
+            all_targets.extend(labels.cpu().numpy())
 
     all_preds = np.array(all_preds)
+    all_topk = np.array(all_topk)
     all_targets = np.array(all_targets)
 
-    report = format_report(all_preds, all_targets)
+    report = format_report(all_preds, all_targets, topk_preds=all_topk)
 
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)

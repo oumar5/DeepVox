@@ -14,6 +14,10 @@ Lire dans l'ordre :
 6. [06_etat_de_lart.md](06_etat_de_lart.md) — Travaux liés et positionnement
 7. [07_risques_et_questions_ouvertes.md](07_risques_et_questions_ouvertes.md) — Limites identifiées
 
+## Retours d'expérience (runs d'entraînement)
+
+- [08_retour_experience_phase1_run1.md](08_retour_experience_phase1_run1.md) — Run #1 : Condition A sur 5 000 fichiers (PER=69 %, surapprentissage, piste données)
+
 ## Article de recherche associé
 
 [../paper/article_fr.md](../paper/article_fr.md) — Brouillon de soumission Interspeech / ICASSP 2027.
@@ -25,4 +29,5 @@ Cette recherche est issue du projet [SmsVox](https://github.com/oumar5/SmsVox), 
 ## Statut
 
 - **2026-04-16** — Création du dépôt DeepVox, migration depuis SmsVox
-- **À venir** — Lancement de la Phase 1 (validation phonétique sur TIMIT)
+- **2026-04-16** — Phase 1 run #1 exécuté (Condition A, 5 k fichiers, PER=69 % — voir doc 08)
+- **À venir** — Phase 1 runs #2-#5 (plus de données, Condition B, contexte élargi)

@@ -83,6 +83,7 @@ def main():
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--max-epochs", type=int, default=50)
     parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--weight-decay", type=float, default=1e-2)
     parser.add_argument("--patience", type=int, default=5)
     parser.add_argument("--context-frames", type=int, default=5, help="Context frames on each side")
     parser.add_argument("--device", type=str, default=None)
@@ -121,6 +122,7 @@ def main():
         max_epochs=args.max_epochs,
         batch_size=args.batch_size,
         lr=args.lr,
+        weight_decay=args.weight_decay,
         patience=args.patience,
         device=args.device,
     )
