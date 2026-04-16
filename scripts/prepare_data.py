@@ -23,6 +23,8 @@ import csv
 import logging
 from pathlib import Path
 
+from tqdm.auto import tqdm
+
 from deepvox.data.preprocess import resample_audio, run_mfa
 
 logging.basicConfig(
@@ -62,11 +64,19 @@ def prepare_subset(
     output_dir.mkdir(parents=True, exist_ok=True)
     count = 0
 
+    total = max_samples or None
+    pbar = tqdm(total=total, desc="Preprocessing", unit="file", dynamic_ncols=True)
+
     with open(tsv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
+        scanned = 0
         for row in reader:
             if max_samples and count >= max_samples:
                 break
+
+            scanned += 1
+            if scanned % 1000 == 0:
+                pbar.set_postfix(scanned=scanned, matched=count)
 
             mp3_name = row.get("path", "")
             sentence = row.get("sentence", "")
@@ -86,13 +96,12 @@ def prepare_subset(
                 resample_audio(mp3_path, wav_path)
                 lab_path.write_text(sentence, encoding="utf-8")
                 count += 1
-
-                if count % 500 == 0:
-                    logger.info("Processed %d files...", count)
+                pbar.update(1)
             except Exception as e:
                 logger.warning("Failed to process %s: %s", mp3_name, e)
                 continue
 
+    pbar.close()
     return count
 
 

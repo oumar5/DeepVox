@@ -11,6 +11,7 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
+from tqdm.auto import tqdm
 
 from deepvox.data.dataset import Condition, PhonemeDataset
 from deepvox.eval.metrics import format_report, phone_error_rate
@@ -84,7 +85,8 @@ def train(
         train_correct = 0
         train_total = 0
 
-        for feats, labels in train_loader:
+        pbar = tqdm(train_loader, desc=f"Epoch {epoch}", unit="batch", dynamic_ncols=True, leave=False)
+        for feats, labels in pbar:
             feats = feats.to(device)
             labels = torch.tensor(labels, dtype=torch.long, device=device)
 
@@ -103,6 +105,7 @@ def train(
             preds = logits_flat.argmax(dim=-1)
             train_correct += (preds == labels_flat).sum().item()
             train_total += labels_flat.numel()
+            pbar.set_postfix(loss=f"{loss.item():.3f}", acc=f"{train_correct/train_total:.3f}")
 
         train_loss /= train_total
         train_acc = train_correct / train_total
@@ -151,7 +154,7 @@ def evaluate(
     all_targets = []
 
     with torch.no_grad():
-        for feats, labels in data_loader:
+        for feats, labels in tqdm(data_loader, desc="Evaluating", unit="batch", dynamic_ncols=True, leave=False):
             feats = feats.to(device)
             labels = torch.tensor(labels, dtype=torch.long, device=device)
 

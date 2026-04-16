@@ -11,11 +11,11 @@
 
 ### Données
 
-- [ ] Télécharger Common Voice French v21.0 (Kaggle) — en cours ~5/28 Go
-- [ ] Resampling 16 kHz → 8 kHz
-- [ ] Alignement forcé MFA → annotations phonétiques (TextGrid)
-- [ ] Encodage Codec2 1200 bps de chaque énoncé
-- [ ] Mapping temporel : bornes phonétiques → grille 40 ms Codec2
+- [x] Télécharger Common Voice French v21.0 (Kaggle) — 840k clips
+- [x] Resampling 16 kHz → 8 kHz (5000 échantillons de test préparés)
+- [x] Alignement forcé MFA → annotations phonétiques (4922 TextGrid)
+- [x] Encodage Codec2 1200 bps (validé sur 1 fichier)
+- [x] Mapping temporel : bornes phonétiques → grille 40 ms Codec2
 - [ ] Constituer les splits train / dev / test / test-OOD
 
 ### Code — modules
