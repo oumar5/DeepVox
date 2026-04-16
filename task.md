@@ -54,8 +54,8 @@
 - [x] Run #1 — Condition A, 5k fichiers (PER=69.2%)
 - [x] Run #2 — Condition A, 20k fichiers (PER=62.8%)
 - [ ] Run #3 — Condition B, 20k fichiers — en cours
-- [ ] Run #4 — Condition A, 80k fichiers — preprocessing en cours
-- [ ] Run #5 — Corpus complet (750k)
+- [x] Run #4 — Condition A, 80k fichiers (PER=56.0%, Top-5=80.7%, interrompu epoch 4)
+- [ ] Run #5 — Corpus complet (750k) — reporté, Phase 2 prioritaire
 
 ### Analyses complémentaires
 
