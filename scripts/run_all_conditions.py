@@ -61,7 +61,8 @@ def main():
     parser.add_argument("--data-dir", type=Path, required=True)
     parser.add_argument("--textgrid-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, default=Path("outputs/phase1"))
-    parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--batch-size", type=int, default=256)
+    parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--max-epochs", type=int, default=50)
     parser.add_argument("--context-frames", type=int, default=5)
     args = parser.parse_args()
@@ -93,6 +94,7 @@ def main():
             output_dir=args.output_dir,
             max_epochs=args.max_epochs,
             batch_size=args.batch_size,
+            num_workers=args.num_workers,
         )
 
         test_loader = DataLoader(test_ds, batch_size=args.batch_size, shuffle=False)

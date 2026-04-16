@@ -80,11 +80,12 @@ def main():
     parser.add_argument("--textgrid-dir", type=Path, required=True, help="Directory with MFA TextGrid files")
     parser.add_argument("--condition", choices=["A", "B", "C", "D"], default="A")
     parser.add_argument("--output-dir", type=Path, default=Path("outputs/phase1"))
-    parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--batch-size", type=int, default=256)
     parser.add_argument("--max-epochs", type=int, default=50)
-    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--lr", type=float, default=2e-3)
     parser.add_argument("--weight-decay", type=float, default=1e-2)
     parser.add_argument("--patience", type=int, default=5)
+    parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--context-frames", type=int, default=5, help="Context frames on each side")
     parser.add_argument("--device", type=str, default=None)
     args = parser.parse_args()
@@ -124,6 +125,7 @@ def main():
         lr=args.lr,
         weight_decay=args.weight_decay,
         patience=args.patience,
+        num_workers=args.num_workers,
         device=args.device,
     )
 

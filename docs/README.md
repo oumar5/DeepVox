@@ -17,6 +17,7 @@ Lire dans l'ordre :
 ## Retours d'expérience (runs d'entraînement)
 
 - [08_retour_experience_phase1_run1.md](08_retour_experience_phase1_run1.md) — Run #1 : Condition A sur 5 000 fichiers (PER=69 %, surapprentissage, piste données)
+- [09_retour_experience_phase1_run2.md](09_retour_experience_phase1_run2.md) — Run #2 : Condition A sur 20 000 fichiers (PER=62.8 %, −6.4 pp, voisement capté à 91 %)
 
 ## Article de recherche associé
 

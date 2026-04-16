@@ -26,10 +26,11 @@ def train(
     condition: Condition,
     output_dir: str | Path = "outputs/phase1",
     max_epochs: int = 50,
-    batch_size: int = 64,
-    lr: float = 1e-3,
+    batch_size: int = 256,
+    lr: float = 2e-3,
     weight_decay: float = 1e-2,
     patience: int = 5,
+    num_workers: int = 4,
     device: str | None = None,
 ) -> PhonemeClassifier:
     """Train the phoneme classifier.
@@ -72,11 +73,22 @@ def train(
     )
     criterion = nn.CrossEntropyLoss()
 
+    pin_memory = device != "cpu"
     train_loader = DataLoader(
-        train_dataset, batch_size=batch_size, shuffle=True, num_workers=0
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=num_workers > 0,
     )
     dev_loader = DataLoader(
-        dev_dataset, batch_size=batch_size, shuffle=False, num_workers=0
+        dev_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=num_workers > 0,
     )
 
     best_dev_per = float("inf")
