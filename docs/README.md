@@ -18,6 +18,7 @@ Lire dans l'ordre :
 
 - [08_retour_experience_phase1_run1.md](08_retour_experience_phase1_run1.md) — Run #1 : Condition A sur 5 000 fichiers (PER=69 %, surapprentissage, piste données)
 - [09_retour_experience_phase1_run2.md](09_retour_experience_phase1_run2.md) — Run #2 : Condition A sur 20 000 fichiers (PER=62.8 %, −6.4 pp, voisement capté à 91 %)
+- [10_retour_experience_phase1_run3_conditionB.md](10_retour_experience_phase1_run3_conditionB.md) — Run #3 : Condition B (delta features) sur 20k — échec (PER=65 %, pire que A), Condition B abandonnée
 
 ## Article de recherche associé
 

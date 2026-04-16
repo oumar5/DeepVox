@@ -44,10 +44,18 @@
 
 ### Expériences
 
-- [ ] Condition A — Codec2 raw (48 features)
-- [ ] Condition B — Codec2 + delta (96 features)
+- [x] Condition A — Codec2 raw (48 features) — run #1 (5k, PER=69.2%) + run #2 (20k, PER=62.8%)
+- [ ] Condition B — Codec2 + delta (96 features) — run en cours sur 20k
 - [ ] Condition C — Spectrogramme mel baseline (80 features)
 - [ ] Condition D — PCM brut baseline basse (320 features)
+
+### Runs de scaling
+
+- [x] Run #1 — Condition A, 5k fichiers (PER=69.2%)
+- [x] Run #2 — Condition A, 20k fichiers (PER=62.8%)
+- [ ] Run #3 — Condition B, 20k fichiers — en cours
+- [ ] Run #4 — Condition A, 80k fichiers — preprocessing en cours
+- [ ] Run #5 — Corpus complet (750k)
 
 ### Analyses complémentaires
 
