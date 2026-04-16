@@ -52,8 +52,8 @@ htmlcov/
 Thumbs.db
 
 # ML artifacts
-data/
-datasets/
+/data/
+/datasets/
 *.wav
 *.mp3
 *.flac
