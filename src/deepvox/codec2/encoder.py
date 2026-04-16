@@ -10,7 +10,6 @@ Supports two backends:
 
 from __future__ import annotations
 
-import struct
 import subprocess
 import tempfile
 from pathlib import Path
@@ -219,7 +218,6 @@ def wav_to_frames(wav_path: str | Path) -> np.ndarray:
         uint8 array, shape (n_frames, 6).
     """
     import librosa
-    import soundfile as sf
 
     audio, sr = librosa.load(wav_path, sr=SAMPLE_RATE, mono=True)
     # librosa returns float32 in [-1, 1], convert to int16

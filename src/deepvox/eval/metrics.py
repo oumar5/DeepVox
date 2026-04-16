@@ -9,8 +9,6 @@ Metrics:
 
 from __future__ import annotations
 
-from collections import Counter
-
 import numpy as np
 
 from deepvox.data.preprocess import IDX_TO_PHONEME, NUM_PHONEMES
@@ -72,7 +70,7 @@ def confusion_matrix(predictions: np.ndarray, targets: np.ndarray) -> np.ndarray
     predictions = np.asarray(predictions)
     targets = np.asarray(targets)
     cm = np.zeros((NUM_PHONEMES, NUM_PHONEMES), dtype=np.int64)
-    for t, p in zip(targets, predictions):
+    for t, p in zip(targets, predictions, strict=True):
         cm[t, p] += 1
     return cm
 
