@@ -21,6 +21,10 @@ Lire dans l'ordre :
 - [10_retour_experience_phase1_run3_conditionB.md](10_retour_experience_phase1_run3_conditionB.md) — Run #3 : Condition B (delta features) sur 20k — échec (PER=65 %, pire que A), Condition B abandonnée
 - [11_retour_experience_phase1_run4.md](11_retour_experience_phase1_run4.md) — Run #4 : Condition A sur 80k (PER=56 %, Top-5=80.7 %, voisement 93 %) — Phase 1 validée, passage Phase 2
 
+## Phase 2 — ASR directe (Codec2 → texte)
+
+- [12_retour_experience_phase2_run1.md](12_retour_experience_phase2_run1.md) — Run #1 : BiLSTM CTC sur 20k (CER=71.2 %), baseline établi, scaling données prioritaire
+
 ## Article de recherche associé
 
 [../paper/article_fr.md](../paper/article_fr.md) — Brouillon de soumission Interspeech / ICASSP 2027.

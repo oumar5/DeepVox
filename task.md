@@ -45,7 +45,7 @@
 ### Expériences
 
 - [x] Condition A — Codec2 raw (48 features) — run #1 (5k, PER=69.2%) + run #2 (20k, PER=62.8%)
-- [ ] Condition B — Codec2 + delta (96 features) — run en cours sur 20k
+- [x] Condition B — Codec2 + delta (96 features) — échec (PER=65%, pire que A, abandonnée)
 - [ ] Condition C — Spectrogramme mel baseline (80 features)
 - [ ] Condition D — PCM brut baseline basse (320 features)
 
@@ -53,7 +53,7 @@
 
 - [x] Run #1 — Condition A, 5k fichiers (PER=69.2%)
 - [x] Run #2 — Condition A, 20k fichiers (PER=62.8%)
-- [ ] Run #3 — Condition B, 20k fichiers — en cours
+- [x] Run #3 — Condition B, 20k fichiers — échec (PER=65%, abandonnée)
 - [x] Run #4 — Condition A, 80k fichiers (PER=56.0%, Top-5=80.7%, interrompu epoch 4)
 - [ ] Run #5 — Corpus complet (750k) — reporté, Phase 2 prioritaire
 
@@ -70,4 +70,36 @@
 - [x] Script reproductible `phase1_phoneme_classification.py`
 - [ ] Rapport `phase1_results.md` (tableaux, matrices, conclusions)
 - [ ] Modèles entraînés versionnés
-- [ ] Décision GO / NO-GO pour Phase 2
+- [x] Décision GO / NO-GO pour Phase 2 — **GO** (voisement 93%, top-5 80%, tendance claire)
+
+## Phase 2 : ASR directe — Codec2 → texte français
+
+### Code — modules
+
+- [x] `src/deepvox/data/text.py` — tokenizer caractères français (49 classes)
+- [x] `src/deepvox/data/ctc_dataset.py` — Dataset CTC + collate_fn
+- [x] `src/deepvox/models/ctc_asr.py` — BiLSTM 3 couches, hidden=384, CTC (9.1M params)
+- [x] `src/deepvox/training/phase2_asr.py` — boucle entraînement CTC
+- [x] `src/deepvox/eval/wer.py` — WER, CER (Levenshtein)
+
+### Code — scripts & notebooks
+
+- [x] `scripts/phase2_asr.py` — CLI Phase 2 (local)
+- [x] `notebooks/02_phase2_asr_kaggle.ipynb` — notebook Kaggle GPU T4
+
+### Tests
+
+- [x] `tests/test_text.py` — 15 tests tokenizer
+- [x] `tests/test_wer.py` — 11 tests WER/CER
+
+### Runs ASR
+
+- [x] Run #1 — 20k fichiers, Kaggle T4, 25 epochs (early stop) — **WER=115.5%, CER=71.2%**
+- [ ] Run #2 — 80k fichiers, Kaggle T4 — à lancer
+- [ ] Run #3 — 80k + KenLM beam search — après run #2 si CER < 50%
+
+### Livrables
+
+- [x] Retour d'expérience `docs/12_retour_experience_phase2_run1.md`
+- [ ] Rapport final Phase 2
+- [ ] Décision sur architecture (BiLSTM vs Conformer)
