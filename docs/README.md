@@ -34,8 +34,16 @@ Lire dans l'ordre :
 
 Cette recherche est issue du projet [SmsVox](https://github.com/oumar5/SmsVox), qui a démontré la faisabilité de Codec2 (1200 bps) pour la transmission vocale ultra-bas-débit par SMS. DeepVox explore la suite logique : utiliser cette même représentation comme entrée de modèles transformers multilingues.
 
+## Suivi des tâches
+
+Voir [../task.md](../task.md) pour le suivi détaillé de toutes les tâches (Phase 1-6).
+
 ## Statut
 
 - **2026-04-16** — Création du dépôt DeepVox, migration depuis SmsVox
-- **2026-04-16** — Phase 1 run #1 exécuté (Condition A, 5 k fichiers, PER=69 % — voir doc 08)
-- **À venir** — Phase 1 runs #2-#5 (plus de données, Condition B, contexte élargi)
+- **2026-04-16** — Phase 1 runs #1-#4 exécutés (PER: 69% → 56%, voisement 93%)
+- **2026-04-16** — Condition B testée et abandonnée (delta features contre-productives)
+- **2026-04-16** — Phase 1 validée (GO Phase 2), passage à l'ASR directe
+- **2026-04-17** — Phase 2 run #1 (20k, CER=71.2%), pivot vers Kaggle T4
+- **2026-04-17** — Phase 2 run #2 (80k, CER=56.9%, −14.3 pp), scaling validé
+- **2026-04-18** — Système de resume ajouté, préparation run #3 (300k, 2 sessions)

@@ -21,9 +21,7 @@ import soundfile as sf
 from deepvox.codec2.encoder import (
     FRAME_DURATION_MS,
     SAMPLE_RATE,
-    SAMPLES_PER_FRAME,
     encode_pcm,
-    unpack_frame,
 )
 
 # Phonèmes du français produits par Montreal Forced Aligner (modèle french_mfa)

@@ -19,7 +19,6 @@ from tqdm.auto import tqdm
 
 from deepvox.codec2.encoder import (
     SAMPLE_RATE,
-    SAMPLES_PER_FRAME,
     encode_pcm,
     unpack_frames,
 )

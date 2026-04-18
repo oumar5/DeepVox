@@ -29,7 +29,6 @@ from deepvox.codec2.encoder import (
 from deepvox.data.preprocess import (
     NUM_PHONEMES,
     PHONEME_TO_IDX,
-    SIL_TOKEN,
     align_phonemes_to_codec2_grid,
     parse_textgrid,
 )
