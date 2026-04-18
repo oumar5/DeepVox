@@ -23,7 +23,8 @@ Lire dans l'ordre :
 
 ## Phase 2 — ASR directe (Codec2 → texte)
 
-- [12_retour_experience_phase2_run1.md](12_retour_experience_phase2_run1.md) — Run #1 : BiLSTM CTC sur 20k (CER=71.2 %), baseline établi, scaling données prioritaire
+- [12_retour_experience_phase2_run1.md](12_retour_experience_phase2_run1.md) — Run #1 : BiLSTM CTC sur 20k (CER=71.2 %), baseline établi
+- [13_retour_experience_phase2_run2.md](13_retour_experience_phase2_run2.md) — Run #2 : BiLSTM CTC sur 80k (CER=56.9 %), −14.3 pp, scaling validé, mots reconnus
 
 ## Article de recherche associé
 

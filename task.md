@@ -95,11 +95,13 @@
 ### Runs ASR
 
 - [x] Run #1 — 20k fichiers, Kaggle T4, 25 epochs (early stop) — **WER=115.5%, CER=71.2%**
-- [ ] Run #2 — 80k fichiers, Kaggle T4 — à lancer
-- [ ] Run #3 — 80k + KenLM beam search — après run #2 si CER < 50%
+- [x] Run #2 — 80k fichiers, Kaggle T4, 50 epochs (complet) — **WER=95.0%, CER=56.9%** (−14.3 pp)
+- [ ] Run #3 — 300k fichiers, Kaggle T4, 40 epochs (2 sessions avec resume) — à lancer
+- [ ] Run #4 — KenLM beam search — après run #3 si CER < 40%
 
 ### Livrables
 
 - [x] Retour d'expérience `docs/12_retour_experience_phase2_run1.md`
+- [x] Retour d'expérience `docs/13_retour_experience_phase2_run2.md`
 - [ ] Rapport final Phase 2
 - [ ] Décision sur architecture (BiLSTM vs Conformer)
