@@ -1,10 +1,13 @@
 """Tests for deepvox.codec2.encoder module."""
 
 import numpy as np
+import pytest
 
 from deepvox.codec2.encoder import (
     BYTES_PER_FRAME,
     SAMPLES_PER_FRAME,
+    _check_cli,
+    _check_pycodec2,
     add_delta_features,
     decode_frames,
     encode_pcm,
@@ -12,7 +15,13 @@ from deepvox.codec2.encoder import (
     unpack_frames,
 )
 
+requires_codec2 = pytest.mark.skipif(
+    not (_check_pycodec2() or _check_cli()),
+    reason="Codec2 backend not available (pycodec2 or CLI)",
+)
 
+
+@requires_codec2
 class TestEncodeDecode:
     def test_encode_shape(self):
         pcm = np.random.randint(-5000, 5000, size=SAMPLES_PER_FRAME * 5, dtype=np.int16)

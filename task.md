@@ -122,7 +122,7 @@
 
 - [x] Retour d'expérience `docs/12_retour_experience_phase2_run1.md`
 - [x] Retour d'expérience `docs/13_retour_experience_phase2_run2.md`
-- [ ] Retour d'expérience Run #3
+- [x] Retour d'expérience `docs/14_retour_experience_phase2_run3.md` (en cours, session 1 documentée)
 - [ ] Rapport final Phase 2
 - [ ] Décision sur architecture (BiLSTM vs Conformer)
 

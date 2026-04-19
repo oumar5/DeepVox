@@ -25,6 +25,7 @@ Lire dans l'ordre :
 
 - [12_retour_experience_phase2_run1.md](12_retour_experience_phase2_run1.md) — Run #1 : BiLSTM CTC sur 20k (CER=71.2 %), baseline établi
 - [13_retour_experience_phase2_run2.md](13_retour_experience_phase2_run2.md) — Run #2 : BiLSTM CTC sur 80k (CER=56.9 %), −14.3 pp, scaling validé, mots reconnus
+- [14_retour_experience_phase2_run3.md](14_retour_experience_phase2_run3.md) — Run #3 : BiLSTM CTC sur 300k, session 1 (CER=48.9 % à epoch 17, en cours)
 
 ## Article de recherche associé
 
