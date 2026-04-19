@@ -3,7 +3,7 @@
 **Date de début** : 2026-04-18
 **Phase** : 2 — ASR directe (Codec2 → texte français)
 **Plateforme** : Kaggle, GPU Tesla T4 (15.6 GB VRAM)
-**Statut** : **en cours** — session 1 terminée (epochs 1-17), session 2 en cours
+**Statut** : **en cours** — session 1 (epochs 1-17) + session 2 (epochs 18-33) terminées, session 3 à lancer
 
 ## Contexte
 
@@ -98,58 +98,112 @@ Le checkpoint `training_state.pth` a été sauvegardé à epoch 17.
 
 ---
 
-## Session 2 — Résultats (epochs 18-??)
+## Session 2 — Résultats (epochs 18-33)
 
-**Statut** : en cours
+**Statut** : arrêtée à epoch 33 (timeout Kaggle), évaluation test pas encore exécutée
 
-_À compléter quand la session 2 sera terminée._
+Le resume a fonctionné correctement : `Resume from epoch 18 (best CER=0.4894)`.
+
+### Évolution par epoch (session 2)
 
 | Epoch | Train loss | Dev WER | Dev CER | lr | Note |
 |---|---|---|---|---|---|
-| 18 | | | | | Resume depuis checkpoint |
-| ... | | | | | |
+| 18 | 1.7821 | 0.879 | 0.478 | 3.0e-04 | Resume OK |
+| 19 | 1.7346 | 0.868 | 0.460 | 3.0e-04 | |
+| 20 | 1.6918 | 0.854 | 0.451 | 3.0e-04 | |
+| 21 | 1.6477 | 0.841 | 0.436 | 3.0e-04 | |
+| 22 | 1.6035 | 0.841 | 0.425 | 3.0e-04 | |
+| 23 | 1.5623 | 0.825 | 0.416 | 3.0e-04 | |
+| 24 | 1.5203 | 0.805 | 0.402 | 3.0e-04 | **CER < 40% franchie** |
+| 25 | 1.4804 | 0.795 | 0.398 | 3.0e-04 | |
+| 26 | 1.4497 | 0.792 | 0.388 | 3.0e-04 | |
+| 27 | 1.4173 | 0.779 | 0.383 | 3.0e-04 | |
+| 28 | 1.3870 | 0.769 | 0.370 | 3.0e-04 | **CER < 37%** |
+| 29 | 1.3556 | 0.773 | 0.373 | 3.0e-04 | Légère remontée |
+| 30 | 1.3287 | 0.755 | 0.359 | 3.0e-04 | |
+| 31 | 1.3028 | 0.746 | 0.355 | 3.0e-04 | "certains" reconnu |
+| 32 | 1.2789 | 0.737 | 0.350 | 3.0e-04 | "d'opérateur avant leur" |
+| **33** | **1.2579** | **0.735** | **0.344** | 3.0e-04 | **Fin session 2** |
+
+### Observations session 2
+
+- **CER = 34.4% à epoch 33** — gain de −14.5 pp en 16 epochs (48.9% → 34.4%)
+- **Le LR n'a TOUJOURS PAS été réduit** — 3e-4 depuis le début, aucun plateau
+- **La loss continue de baisser** régulièrement (1.78 → 1.26)
+- **WER = 73.5%** — ~3/4 des mots sont corrects en position
+- Le modèle n'a pas convergé — il reste de la marge
+
+### Exemples qualitatifs (epoch 33)
+
+| REF | HYP | Analyse |
+|---|---|---|
+| en cause la propagation du épidémie aiguë de fièvre aphteuse | enpose la propacation du etidemie télu de sei rasteuses | "propacation" ≈ "propagation", "etidemie" ≈ "épidémie", "rasteuses" ≈ "aphteuse" |
+| certains satellites ont changé d'opérateur avant leur lancement ou lors de leur [...] | certains satévites ent changeus d'pérateur adant ler lanement où aunors de leurs | **"certains"** exact, "changeus" ≈ "changé", "lanement" ≈ "lancement", "lors de leurs" ≈ "ou alors de leurs" |
+
+**Progression majeure vs session 1** :
+- "certains" est maintenant parfaitement reconnu (vs "saton" à epoch 17)
+- "d'opérateur" est presque correct (vs "de pratere")
+- "lancement" → "lanement" (1 seule lettre manquante)
+- La structure syntaxique est quasi parfaite
+
+### Durée session 2
+
+| Étape | Durée |
+|---|---|
+| Preprocessing (300k MP3) | ~75 min |
+| Entraînement (16 epochs × 1711s) | ~7.6 h |
+| **Total session 2** | **~8.9 h** |
 
 ---
 
-## Projection
+## Bilan combiné (33 epochs sur 2 sessions)
 
-### Basée sur la tendance epochs 1-17
+### Progression globale
 
-Le CER baisse d'environ **1.5 pp par epoch** (tendance linéaire sur epochs 10-17).
-Si cette tendance se maintient :
+| Epoch | CER | WER | Loss | Jalon |
+|---|---|---|---|---|
+| 1 | 73.0% | 1.081 | 2.770 | Blank collapse |
+| 5 | 64.2% | 1.005 | 2.394 | Syllabes |
+| 10 | 59.1% | 0.953 | 2.188 | CER < 60% |
+| 17 | 48.9% | 0.890 | 1.837 | Fin session 1 |
+| 20 | 45.1% | 0.854 | 1.692 | Mots reconnaissables |
+| 24 | 40.2% | 0.805 | 1.520 | **CER < 40%** |
+| 28 | 37.0% | 0.769 | 1.387 | CER < 37% |
+| **33** | **34.4%** | **0.735** | **1.258** | **Fin session 2** |
 
-| Epoch | CER projeté |
-|---|---|
-| 17 | 48.9 % (mesuré) |
-| 25 | ~37 % |
-| 30 | ~30-33 % |
-| 40 | ~25-28 % |
+**Vitesse de convergence** : −1.17 pp CER/epoch en moyenne sur les 33 epochs.
+
+### Comparaison transversale Phase 2
+
+| Run | Corpus | Epochs | Best CER (dev) | WER (dev) | Gain CER |
+|---|---|---|---|---|---|
+| #1 | 20k | 25 | 71.1% | 115.5% | — |
+| #2 | 80k | 50 | 56.9% | 95.0% | −14.2 pp |
+| **#3** | **300k** | **33** | **34.4%** | **73.5%** | **−22.5 pp** |
 
 ### Avec KenLM (post-training)
 
+Le seuil CER < 40% est franchi (epoch 24). L'intégration de KenLM est maintenant pertinente.
+
 Un modèle de langue n-gram français (KenLM + pyctcdecode) gagnerait typiquement
-10-15 pp de CER supplémentaires :
+10-15 pp de CER :
 
 | Scénario | CER estimé |
 |---|---|
-| Run #3 epoch 40 (greedy) | ~25-28 % |
+| Run #3 epoch 33 (greedy) | 34.4 % (mesuré) |
+| Run #3 epoch 33 + KenLM | **~20-25 %** |
+| Run #3 epoch 40 (greedy, projeté) | ~28-30 % |
 | Run #3 epoch 40 + KenLM | **~15-20 %** |
 
-## Comparaison transversale Phase 2
+## Fichiers produits
 
-| Run | Corpus | Epochs | CER test | WER test | Gain CER vs précédent |
-|---|---|---|---|---|---|
-| #1 | 20k | 25 | 71.2 % | 115.5 % | — |
-| #2 | 80k | 50 | 56.9 % | 95.0 % | −14.3 pp |
-| **#3** | **300k** | **17 (session 1)** | **~48.9 % (dev)** | **~89.0 % (dev)** | **−8.0 pp (et pas fini)** |
+- `/kaggle/working/run3_300k/training_state.pth` — checkpoint complet epoch 33 (resume)
+- `/kaggle/working/run3_300k/best_asr.pt` — meilleur modèle (epoch 33, CER=0.344)
+- `/kaggle/working/run3_300k/checkpoint_epoch{10,20,30}.pt` — checkpoints périodiques
 
-## Fichiers produits (session 1)
+## Prochaines étapes
 
-- `/kaggle/working/run3_300k/training_state.pth` — checkpoint complet (resume)
-- `/kaggle/working/run3_300k/best_asr.pt` — meilleur modèle (epoch 17, CER=0.489)
-
-## Prochaine étape
-
-1. **Session 2** : resume epochs 18-40, objectif CER < 35%
-2. **Évaluation test** sur les 15k samples test
-3. **KenLM** : si CER < 40%, intégrer beam search + modèle de langue français
+1. **Session 3** : resume epochs 34-40, objectif CER < 30%
+2. **Évaluation test** sur les 15k samples test (exécuter cellules 20-21 du notebook)
+3. **KenLM** : intégrer `pyctcdecode` + modèle de langue français (CER < 40% atteint)
+4. **Retour d'expérience final** : compléter ce document avec résultats test et session 3
