@@ -115,8 +115,9 @@
 
 - [x] Run #1 — 20k, Kaggle T4, 25 epochs (early stop) — **WER=115.5%, CER=71.2%** — `docs/12_retour_experience_phase2_run1.md`
 - [x] Run #2 — 80k, Kaggle T4, 50 epochs (complet) — **WER=95.0%, CER=56.9%** (−14.3 pp) — `docs/13_retour_experience_phase2_run2.md`
-- [ ] Run #3 — 300k, Kaggle T4, 40 epochs (2 sessions avec resume) — **à lancer**
-- [ ] Run #4 — KenLM beam search — après run #3 si CER < 40%
+- [x] Run #3 — 300k, Kaggle T4, 38 epochs (3 sessions) — **CER=32.3%, WER=70.7%** (−24.6 pp)
+- [ ] Run #4 — Fine-tune 586k (corpus complet), LR=1e-4, depuis best run3 — à lancer
+- [ ] Run #5 — KenLM beam search — après run #4
 
 ### Livrables
 
@@ -166,6 +167,7 @@
 | 1 | #4 | 80k | PER | 56.0%, Top-5=80.7%, voisement=93% |
 | 2 | #1 | 20k | CER | 71.2% |
 | 2 | #2 | 80k | CER | **56.9%**, WER=95.0% |
-| 2 | #3 | 300k | CER | en cours |
+| 2 | #3 | 300k | CER | **32.3%**, WER=70.7% |
+| 2 | #4 | 586k (fine-tune) | CER | en cours |
 
 **Tendance** : chaque ×4 de données = −6-7 pp PER (Phase 1) / −14 pp CER (Phase 2)
