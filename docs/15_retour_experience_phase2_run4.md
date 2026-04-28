@@ -107,14 +107,28 @@ d'étranglement Kaggle.
 
 ## Session 2 — Résultats (epochs 10-??)
 
-**Statut** : à lancer
+**Statut** : en cours
 
-_À compléter quand la session 2 sera terminée._
+Note : la session 1 a en fait fait 10 epochs (epoch 10 sauvegardée dans le checkpoint
+mais output non affiché). Resume `from epoch 11 (best CER=0.2548)` confirme.
 
 | Epoch | Train loss | Dev WER | Dev CER | lr | Note |
 |---|---|---|---|---|---|
-| 10 | | | | | Resume depuis checkpoint |
+| 11 | 0.9385 | 0.604 | **0.252** | 1.0e-04 | Resume OK, **CER < 25.5%** |
 | ... | | | | | |
+
+### Exemples qualitatifs (epoch 11)
+
+| REF | HYP |
+|---|---|
+| ralph depalma s'y est imposé à trois reprises | rac de palma sie componé à trois reprise |
+| je m'y oppose régulièrement au sein de la commission des finances et en séance | jemi opose rigulièrement au seine de la commission de finals su te con fiance |
+
+**Progression vs epoch 9** :
+- "**la commission**" toujours parfait
+- "**au seine de**" (vs "au seile de" à epoch 9)
+- "**jemi**" très proche de "je m'y" (vs "jili" à epoch 9)
+- "trois reprise" parfait
 
 ---
 
