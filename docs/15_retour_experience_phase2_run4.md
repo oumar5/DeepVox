@@ -115,7 +115,11 @@ mais output non affiché). Resume `from epoch 11 (best CER=0.2548)` confirme.
 | Epoch | Train loss | Dev WER | Dev CER | lr | Note |
 |---|---|---|---|---|---|
 | 11 | 0.9385 | 0.604 | **0.252** | 1.0e-04 | Resume OK, **CER < 25.5%** |
-| ... | | | | | |
+| 12 | — | — | — | — | (epoch tournée mais output non affiché, best CER=0.2509) |
+| 13 | 0.9213 | 0.597 | **0.248** | 1.0e-04 | **CER < 25%** |
+| 14 | 0.9143 | 0.593 | **0.247** | 1.0e-04 | "siest imposé à trois reprises" quasi parfait |
+| 15 | 0.9055 | 0.592 | **0.246** | 1.0e-04 | "au sein de la commission" parfait |
+| 16 | 0.8983 | 0.592 | **0.246** | 1.0e-04 | Plateau apparent, loss baisse encore |
 
 ### Exemples qualitatifs (epoch 11)
 
