@@ -120,6 +120,25 @@ mais output non affiché). Resume `from epoch 11 (best CER=0.2548)` confirme.
 | 14 | 0.9143 | 0.593 | **0.247** | 1.0e-04 | "siest imposé à trois reprises" quasi parfait |
 | 15 | 0.9055 | 0.592 | **0.246** | 1.0e-04 | "au sein de la commission" parfait |
 | 16 | 0.8983 | 0.592 | **0.246** | 1.0e-04 | Plateau apparent, loss baisse encore |
+| 17 | — | — | — | — | (output non affiché, best CER=0.2451) |
+| 18 | 0.8846 | 0.585 | **0.244** | 1.0e-04 | |
+| 19 | 0.8780 | 0.584 | **0.243** | 1.0e-04 | "si est imposé à trois reprises" parfait |
+| 20 | 0.8717 | 0.584 | **0.241** | 1.0e-04 | |
+| 21 | 0.8660 | 0.579 | **0.241** | 1.0e-04 | |
+| 22 | 0.8606 | 0.578 | **0.239** | 1.0e-04 | **CER < 24%** |
+| 23 | 0.8544 | 0.573 | **0.238** | 1.0e-04 | |
+| 24 | 0.8482 | 0.574 | **0.238** | 1.0e-04 | |
+| **25** | **0.8427** | **0.575** | **0.238** | 1.0e-04 | **FIN — Best CER=0.2379** |
+
+### Résultat final Run #4
+
+**CER = 23.79% / WER = 57.5%** sur le dev set (29k samples).
+
+Comparé au point de départ (run #3 best : CER=32.3%) :
+- **Gain : −8.5 pp CER en 25 epochs de fine-tune** sur 586k
+- **−24.0 pp** vs run #3 final (CER=70.7%) sur le même type d'évaluation
+
+La loss continue de baisser à epoch 25 (0.843), le LR n'a jamais été réduit. Le modèle pourrait probablement encore progresser avec plus d'epochs.
 
 ### Exemples qualitatifs (epoch 11)
 
