@@ -130,15 +130,48 @@ mais output non affiché). Resume `from epoch 11 (best CER=0.2548)` confirme.
 | 24 | 0.8482 | 0.574 | **0.238** | 1.0e-04 | |
 | **25** | **0.8427** | **0.575** | **0.238** | 1.0e-04 | **FIN — Best CER=0.2379** |
 
-### Résultat final Run #4
+### Résultat à epoch 25 (premier checkpoint final)
 
 **CER = 23.79% / WER = 57.5%** sur le dev set (29k samples).
 
-Comparé au point de départ (run #3 best : CER=32.3%) :
-- **Gain : −8.5 pp CER en 25 epochs de fine-tune** sur 586k
-- **−24.0 pp** vs run #3 final (CER=70.7%) sur le même type d'évaluation
+La loss baissait encore (0.843), le LR n'a jamais été réduit. Décision : continuer
+l'entraînement avec MAX_EPOCHS=50.
 
-La loss continue de baisser à epoch 25 (0.843), le LR n'a jamais été réduit. Le modèle pourrait probablement encore progresser avec plus d'epochs.
+---
+
+## Session 5 — Continuation au-delà de 25 epochs (epochs 26-??)
+
+| Epoch | Train loss | Dev WER | Dev CER | lr | Note |
+|---|---|---|---|---|---|
+| 26 | 0.8380 | 0.568 | **0.236** | 1.0e-04 | Saved best |
+| 27 | 0.8322 | 0.562 | **0.232** | 1.0e-04 | |
+| 28 | 0.8277 | 0.567 | 0.233 | 1.0e-04 | |
+| 29 | 0.8233 | 0.565 | 0.232 | 1.0e-04 | |
+| 30 | 0.8184 | 0.561 | **0.231** | 1.0e-04 | |
+| 31 | 0.8131 | 0.558 | **0.229** | 1.0e-04 | **CER < 23%** |
+| 32 | 0.8085 | 0.557 | **0.228** | 1.0e-04 | |
+| 33 | 0.8035 | 0.561 | 0.229 | 1.0e-04 | |
+| 34 | 0.7992 | 0.559 | **0.228** | 1.0e-04 | |
+| 35 | 0.7953 | 0.554 | **0.227** | 1.0e-04 | |
+| **36** | **0.7913** | **0.552** | **0.226** | 1.0e-04 | **Best CER = 22.64%** |
+| 37 | 0.7871 | 0.556 | 0.228 | 1.0e-04 | légère remontée |
+
+### Progression épisode 25 → 36
+
+- **CER : 23.79% → 22.64%** (−1.15 pp en 11 epochs)
+- **WER : 57.5% → 55.2%** (−2.3 pp)
+- **Loss : 0.843 → 0.791** (baisse régulière)
+- LR scheduler n'a toujours pas réduit le LR
+
+**Vitesse de convergence ralentie** : ~−0.1 pp/epoch (vs ~−0.4 pp/epoch sur epochs 1-9).
+Le modèle approche de son plateau mais progresse encore.
+
+### Résultat final Run #4 (à compléter)
+
+**CER actuel : 22.64% / WER : 55.2%** sur dev set (29k samples).
+
+Comparé au point de départ (run #3 best : CER=32.3%) :
+- **Gain : −9.7 pp CER en 36 epochs de fine-tune** sur 586k
 
 ### Exemples qualitatifs (epoch 11)
 
