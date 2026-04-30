@@ -126,7 +126,7 @@ def main():
     zip_size = zip_path.stat().st_size / 1e9
     print(f"Zip: {zip_size:.2f} GB")
 
-    print(f"\n=== DONE ===")
+    print("\n=== DONE ===")
     print(f"1. Upload {zip_path} comme dataset Kaggle 'deepvox-preprocessed'")
     print(f'2. Dans le notebook: PREPROCESSED_PATH = "/kaggle/input/deepvox-preprocessed/deepvox_{label}.pkl"')
 
