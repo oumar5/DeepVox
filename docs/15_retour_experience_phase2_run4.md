@@ -1,9 +1,10 @@
 # 15 — Retour d'expérience Phase 2 ASR, run #4 (Fine-tune 586 k fichiers)
 
 **Date de début** : 2026-04-21
+**Date de fin** : 2026-04-30
 **Phase** : 2 — ASR directe (Codec2 → texte français)
 **Plateforme** : Kaggle, GPU Tesla T4 (15.6 GB VRAM)
-**Statut** : **en cours** — session 1 terminée (epochs 1-9)
+**Statut** : **TERMINÉ** — modèle final à epoch 48 (best dev CER=21.37%), évaluation test complète avec et sans KenLM
 
 ## Contexte
 
@@ -255,11 +256,104 @@ from scratch qui a atteint 32.3%).
 - `/kaggle/working/run4_finetune_586k/training_state.pth` — checkpoint complet resume
 - `/kaggle/working/run4_finetune_586k/best_asr.pt` — meilleur modèle (epoch 9, CER=0.255)
 
-## Prochaines étapes
+## Suite de l'entraînement (epochs 47-48)
 
-1. **Session 2** : resume epochs 10-20, objectif CER < 22%
-2. **Session 3 éventuelle** : epochs 21-25, objectif CER < 20%
-3. **Évaluation test** sur les 29k samples test (cellules 18-19 du notebook)
-4. **KenLM** : intégrer `pyctcdecode` + modèle de langue français — devrait amener
-   le CER autour de 12-15%
-5. **Retour d'expérience final** : compléter ce document avec résultats test et sessions suivantes
+| Epoch | Train loss | Dev CER | lr | Note |
+|---|---|---|---|---|
+| 47 | ~0.71 | **0.2137** | 5.0e-05 | **Best CER final = 21.37%** |
+| 48 | (resume confirmé "Resume from epoch 48, best CER=0.2137") | — | 5.0e-05 | Plateau atteint, arrêt |
+
+L'amélioration s'est stabilisée après l'epoch 44. Le modèle a été figé pour évaluation.
+
+---
+
+## Évaluation test finale (29 300 samples)
+
+### Décodage GREEDY (argmax sans LM)
+
+| Métrique | Valeur |
+|---|---|
+| **WER** | **0.5277 (52.8%)** |
+| **CER** | **0.2128 (21.3%)** |
+| Samples | 29 300 |
+| Temps | 22 min 29 s (1.26 s/sample sur CPU) |
+
+### Décodage BEAM SEARCH + KenLM (5-gram FR, 1.15 GB)
+
+Configuration : `beam_width=100`, `alpha=0.5`, `beta=1.0`, KenLM `.bin` (warning unigrammes désactivés).
+
+| Métrique | Valeur |
+|---|---|
+| **WER** | **0.4263 (42.6%)** |
+| **CER** | **0.2054 (20.5%)** |
+| Samples | 29 300 |
+| Temps | 35 min 59 s (74 ms/sample) |
+
+### Comparaison Greedy vs +KenLM
+
+| Métrique | Greedy | +KenLM | Δ |
+|---|---|---|---|
+| **WER** | 52.8% | **42.6%** | **−10.1 pp** |
+| **CER** | 21.3% | 20.5% | −0.7 pp |
+
+### Analyse qualitative
+
+**Le LM corrige bien** :
+
+- Segmentation des mots collés (`seulexemple` → `seul exemple`, `entre-deuguerre` → `entre-deux guerre`)
+- Terminaisons grammaticales (`variaent` → `varient`, `groue-` → `groupe`, `club pour` → `clubs pour`)
+- Mots fréquents (`le département de`, `dispose d'une deuxième`)
+
+**Le LM dégrade ou n'aide pas** :
+
+- Mots rares / OOV (`harouys` → `au`, `plâtrée` → `a prie`, `creuser` → `croe`)
+- Zones où le modèle acoustique hallucine déjà (`berméditement`, `jecorse`)
+- Le `.bin` sans unigrammes désactive le boost lexical de pyctcdecode
+
+### Pourquoi seulement −0.7 pp CER ?
+
+1. **`Unigrams not provided`** (warning du `.bin`) → boost lexical de pyctcdecode désactivé
+2. **alpha=0.5 / beta=1.0** non tunés sur ce modèle
+3. **Modèle acoustique hallucine** sur les zones difficiles → le LM ne peut récupérer un mot inexistant dans la sortie
+
+Le gain se concentre sur le WER (boundaries de mots) car le LM raisonne au niveau mot/n-gram, pas caractère.
+
+---
+
+## Bilan final Phase 2
+
+| Run | Corpus | Epochs | Best CER (dev) | WER (dev) | Stratégie |
+|---|---|---|---|---|---|
+| #1 | 20k | 25 | 71.1% | 115.5% | From scratch |
+| #2 | 80k | 50 | 56.9% | 95.0% | From scratch |
+| #3 | 300k | 38 | 32.3% | 70.7% | From scratch |
+| **#4** | **586k** | **47** | **21.37%** | **53.0%** | **Fine-tune from #3** |
+| **#4 + KenLM** | 586k | 47 | **20.5% (test)** | **42.6% (test)** | Beam search 5-gram FR |
+
+### Gains successifs
+
+- Run #1 → #4 greedy : **−49.7 pp CER** (71% → 21%)
+- Run #4 greedy → +KenLM : **−10.1 pp WER** (52.8% → 42.6%)
+- Modèle final : **9.1 M params, 36.5 MB** (vs Whisper-tiny 39 M / 150 MB)
+
+### Innovations validées
+
+1. **Preprocessing local** (pickle 14.6 GB / zip 947 MB) : 8 h Kaggle économisées par session
+2. **Fine-tune from previous best** : −6.8 pp CER en 9 epochs (vs 38 epochs from scratch pour run #3)
+3. **Resume avec état complet** (model + optimizer + scheduler + history) sur 5 sessions Kaggle
+4. **LR scheduler ReduceLROnPlateau** : déclenchement tardif (epoch 43) après plateau, gain immédiat (−0.9 pp en 2 epochs)
+
+## Fichiers produits — final
+
+- `/kaggle/working/run4_finetune_586k/training_state.pth` — checkpoint complet
+- `/kaggle/working/run4_finetune_586k/best_asr.pt` — meilleur modèle (epoch 47, dev CER=0.2137)
+- `models/fr_5gram.bin` (Kaggle dataset) — KenLM 5-gram français, 1.15 GB
+- `data/deepvox_586k.pkl` (local) — 586k samples préprocessés en Codec2 + char_ids
+
+## Prochaines étapes (Phase 3)
+
+1. **Tuner alpha/beta KenLM** : grid search sur 1000 samples → gain attendu 1-3 pp WER
+2. **Utiliser le `.arpa`** au lieu du `.bin` → activer les unigrammes → −1 à −2 pp CER
+3. **Pruner / quantizer le modèle** → cibler <20 MB pour mobile
+4. **Cibler 2 paires de langues supplémentaires** (FR↔EN, FR↔ES) sous le budget 200 MB
+5. **Streaming Codec2** pour use case visioconférence offline
