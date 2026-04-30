@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from deepvox.data.text import (
     BLANK_IDX,
-    UNK_TOKEN,
+    UNK_IDX,
     VOCAB,
     decode,
     decode_ctc,
@@ -142,8 +142,9 @@ def main():
 
         print(f"\n=== Évaluation BEAM SEARCH + KenLM ({args.lm}) ===")
         labels = list(VOCAB)
-        labels[BLANK_IDX] = ""
-        labels = [c if c != UNK_TOKEN else "" for c in labels]
+        labels[BLANK_IDX] = ""           # blank → chaîne vide
+        labels[UNK_IDX] = "⁇"            # UNK → caractère unique pour éviter doublon
+        assert len(labels) == len(set(labels)), "Duplicate labels"
 
         decoder = build_ctcdecoder(
             labels=labels,
