@@ -159,6 +159,20 @@ l'entraînement avec MAX_EPOCHS=50.
 | **39** | **0.7795** | **0.550** | **0.224** | 1.0e-04 | **Best CER = 22.42%** |
 | 40 | 0.7762 | 0.548 | 0.224 | 1.0e-04 | **WER < 55%** pour la 1ère fois |
 | 41 | 0.7723 | 0.555 | 0.227 | 1.0e-04 | "siy est imposé à trois reprises" quasi parfait |
+| 42 | — | — | — | — | (output non affiché, best CER=0.2242) |
+| **43** | **0.7339** | **0.534** | **0.217** | **5.0e-05** | **LR RÉDUIT ×0.5** — Saved best |
+| **44** | **0.7244** | **0.530** | **0.215** | 5.0e-05 | **Best CER = 21.51%** |
+| 45 | 0.7197 | 0.531 | 0.215 | 5.0e-05 | "s' est imposé à trois reprises" parfait |
+| 46 | 0.7165 | 0.531 | 0.215 | 5.0e-05 | "s'y est simposé à trois reprises" |
+
+### Saut qualitatif à l'epoch 43
+
+Le LR scheduler a enfin déclenché (1e-4 → 5e-5) après 42 epochs de plateau. Effet immédiat :
+- CER : 22.4% → 21.5% en 2 epochs (−0.9 pp)
+- Loss : 0.78 → 0.72
+- WER : passé sous 53%
+
+Cela confirme la stratégie "fine-tune + LR conservateur" : le modèle avait encore de la marge mais avait besoin d'un signal d'apprentissage plus fin pour l'exploiter.
 
 ### Progression épisode 25 → 36
 
